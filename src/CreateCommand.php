@@ -18,6 +18,7 @@ readonly class CreateCommand
         private DateTimeImmutable $dateTime,
     ) {
     }
+
     /**
      * @param string $migrationName Name of migration to create
      * @param string $migrationsDir Migrations target directory
@@ -28,7 +29,11 @@ readonly class CreateCommand
     ): bool {
         $timestamp = $this->dateTime->format("Uv");
         $classname = "Migration" . $timestamp . $migrationName;
-        $filename = sprintf("%s/%s.php", rtrim($migrationsDir, DIRECTORY_SEPARATOR), $classname);
+        $filename = sprintf(
+            "%s" . DIRECTORY_SEPARATOR . "%s.php",
+            rtrim($migrationsDir, DIRECTORY_SEPARATOR),
+            $classname
+        );
         $contents = <<<FILE_CONTENTS
 <?php
 
