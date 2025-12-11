@@ -5,6 +5,7 @@
     "type": "library",
     "require-dev": {
         "phan/phan": "~6.0.0-beta",
+        "php-coveralls/php-coveralls": "^2.7.0",
         "phpunit/phpunit": "^12",
         "squizlabs/php_codesniffer": "^4"
     },
