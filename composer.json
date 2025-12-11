@@ -37,14 +37,21 @@
         "ci:lint-fix": "@lint-fix",
         "ci:test-build": [
             "@test --configuration=phpunit.xml --testsuite unit",
-            "@test --configuration=phpunit.acceptance.xml --testsuite acceptance"
+            "@test --configuration=phpunit.xml --testsuite acceptance --testdox"
         ],
         "ci:generate-coverage-badge": [
             "@test --configuration=phpunit.ci.xml",
             "composer exec \"php-coveralls -v\""
         ],
+        "acceptance-report-format": "sed -i -E -e '1i # Acceptance Test Report\\n' -e 's/^(\\S)/## \\1/' -e 's/^(## .*)$/\\1\\n/' -e 's/^ \\[/- [/' -e '$d' acceptance-test-results.md",
+        "test:acceptance": "@test --configuration=phpunit.xml --testsuite acceptance",
+        "test:acceptance:report": [
+            "@test:acceptance --testdox-text acceptance-test-results.md",
+            "@acceptance-report-format"
+        ],
         "docs:generate": "composer exec \"docker run --rm -v \"$(pwd):/data\" \"phpdoc/phpdoc:3\" --setting graphs.enabled=true\"",
         "lint": "phpcs",
-        "lint-fix": "phpcbf"
+        "lint-fix": "phpcbf",
+        "test": "phpunit"
     }
 }

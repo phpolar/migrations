@@ -12,9 +12,6 @@
     failOnRisky="true"
     failOnWarning="true">
     <testsuites>
-        <testsuite name="default">
-            <directory>tests/unit</directory>
-        </testsuite>
         <testsuite name="acceptance">
             <directory>tests/acceptance</directory>
         </testsuite>

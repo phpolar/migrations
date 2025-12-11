@@ -58,7 +58,6 @@ final class RunCommandHandlerTest extends TestCase
     ) {
         $runCommandMock = $this->createMock(RunCommand::class);
         $loggerMock = $this->createMock(LoggerInterface::class);
-        $loggerMock = $this->createMock(LoggerInterface::class);
         $pendingMigrationQueryMock = $this->createMock(GetPendingMigrationsQuery::class);
         $pendingMigrations = [new Migration1765073576565CreateSomeRandomTable()];
 
