@@ -28,7 +28,7 @@ readonly class CreateCommand
     ): bool {
         $timestamp = $this->dateTime->format("Uv");
         $classname = "Migration" . $timestamp . $migrationName;
-        $filename = sprintf("%s/%s.php", rtrim($migrationsDir, "/"), $classname);
+        $filename = sprintf("%s/%s.php", rtrim($migrationsDir, DIRECTORY_SEPARATOR), $classname);
         $contents = <<<FILE_CONTENTS
 <?php
 
