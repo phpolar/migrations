@@ -2,8 +2,9 @@ repos:
 - hooks:
   - exclude: (docs|\.phan)
     id: trailing-whitespace
-  - id: end-of-file-fixer
-  - exclude: (.vscode)
+  - exclude: (docs|\.vscode|\.phan)
+    id: end-of-file-fixer
+  - exclude: (docs|\.vscode|\.phan)
     id: check-json
   - id: check-xml
   - id: check-yaml
