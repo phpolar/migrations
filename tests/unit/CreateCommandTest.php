@@ -16,6 +16,7 @@ final class CreateCommandTest extends TestCase
 {
     const MIGRATION_DEST = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "__files__";
 
+
     #[Test]
     #[TestDox("Shall write the content to the file")]
     #[TestWith([
