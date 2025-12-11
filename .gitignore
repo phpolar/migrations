@@ -1,0 +1,12 @@
+.DS_Store
+.phpunit.cache
+.phpdoc
+.vs/
+/vendor/
+/api/
+/docs/
+/build/
+/analysis/
+/.vscode/
+/.idea/
+**/tests/**/__files__

@@ -1,0 +1,49 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "phpolar/migrations",
+    "description": "Adds support for running database migrations in your application",
+    "type": "library",
+    "require-dev": {
+        "phan/phan": "~6.0.0-beta",
+        "phpunit/phpunit": "^12",
+        "squizlabs/php_codesniffer": "^4"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": ">=8.4",
+        "php-contrib/migration": "^1.0",
+        "psr/log": "^3.0.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phpolar\\Migrations\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "tests/__classes__/Migration1765073576565CreateSomeRandomTable.php",
+            "tests/__classes__/Migration1765073576566CreateSomeRandomTable.php",
+            "tests/__classes__/Migration1765073576567CreateSomeRandomTable.php"
+        ]
+    },
+    "license": "MIT",
+    "scripts": {
+        "analyze:strict": "phan --no-progress-bar --strict-type-checking --analyze-twice --color --output-mode=text --color-scheme=light",
+        "ci:analyze": "@analyze",
+        "ci:lint": "@lint",
+        "ci:lint-fix": "@lint-fix",
+        "ci:test-build": [
+            "@test --configuration=phpunit.xml --testsuite unit",
+            "@test --configuration=phpunit.acceptance.xml --testsuite acceptance"
+        ],
+        "ci:generate-coverage-badge": [
+            "@test --configuration=phpunit.ci.xml",
+            "composer exec \"php-coveralls -v\""
+        ],
+        "docs:generate": "composer exec \"docker run --rm -v \"$(pwd):/data\" \"phpdoc/phpdoc:3\" --setting graphs.enabled=true\"",
+        "lint": "phpcs",
+        "lint-fix": "phpcbf"
+    }
+}
