@@ -11,8 +11,8 @@ jobs:
           [
             'ubuntu-24.04',
             'ubuntu-22.04',
-            'windows-2025',
-            'windows-2022',
+            # 'windows-2025', pdo-mysql does not exist
+            # 'windows-2022', pdo-mysql does not exist
             'macos-15',
             'macos-15-intel',
             'macos-14',
