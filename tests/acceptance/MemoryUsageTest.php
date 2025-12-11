@@ -49,7 +49,7 @@ final class MemoryUsageTest extends TestCase
 
     #[Test]
     #[TestDox(
-        "Memory usage for a create command request shall be below "
+        "Memory usage for the create command request shall be below "
             . CREATE_COMMAND_MEMORY_USAGE_THRESHOLD
             . " bytes"
     )]
@@ -77,7 +77,7 @@ final class MemoryUsageTest extends TestCase
 
     #[Test]
     #[TestDox(
-        "Memory usage for a revert command request shall be below "
+        "Memory usage for the revert command request shall be below "
             . REVERT_COMMAND_MEMORY_USAGE_THRESHOLD
             . " bytes"
     )]
@@ -139,7 +139,7 @@ final class MemoryUsageTest extends TestCase
 
     #[Test]
     #[TestDox(
-        "Memory usage for a run command request shall be below "
+        "Memory usage for the run command request shall be below "
             . RUN_COMMAND_MEMORY_USAGE_THRESHOLD
             . " bytes"
     )]
