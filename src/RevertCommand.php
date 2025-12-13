@@ -22,6 +22,11 @@ readonly class RevertCommand
     ) {
     }
 
+    public function getLastMigrationName()
+    {
+        return $this->migration::class;
+    }
+
     /**
      * Execute the command.
      */

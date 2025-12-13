@@ -128,7 +128,6 @@ final class MemoryUsageTest extends TestCase
                 SQL,
                 nameColumn: $nameColumn,
             ),
-            lastMigrationQuery: new GetLastMigrationQuery($connectionStub, ""),
             logger: new StreamLogger($this->stream),
         )->revert();
 
