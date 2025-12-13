@@ -71,6 +71,56 @@ Search.appendIndex(
             "summary": "Retrieve\u0020pending\u0020migrations.",
             "url": "classes/Phpolar-Migrations-GetPendingMigrationsQuery.html#method_query"
         },                {
+            "fqsen": "\\Phpolar\\Migrations\\LedgerInsertStatus",
+            "name": "LedgerInsertStatus",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-LedgerInsertStatus.html"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\LedgerInsertStatus\u003A\u003AFAILED",
+            "name": "FAILED",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-LedgerInsertStatus.html#enumcase_FAILED"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\LedgerInsertStatus\u003A\u003ASUCCESSFUL",
+            "name": "SUCCESSFUL",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-LedgerInsertStatus.html#enumcase_SUCCESSFUL"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunCompleted",
+            "name": "MigrationRunCompleted",
+            "summary": "Provides\u0020information\u0020about\u0020the\u0020result\u0020of\u0020running\u0020a\u0020migration.",
+            "url": "classes/Phpolar-Migrations-MigrationRunCompleted.html"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunCompleted\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunCompleted.html#method___construct"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunCompleted\u003A\u003A\u0024status",
+            "name": "status",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunCompleted.html#property_status"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunFailure",
+            "name": "MigrationRunFailure",
+            "summary": "Provides\u0020information\u0020about\u0020the\u0020result\u0020of\u0020running\u0020a\u0020migration.",
+            "url": "classes/Phpolar-Migrations-MigrationRunFailure.html"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunFailure\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunFailure.html#method___construct"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunFailure\u003A\u003A\u0024status",
+            "name": "status",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunFailure.html#property_status"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunFailure\u003A\u003A\u0024errorMessage",
+            "name": "errorMessage",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunFailure.html#property_errorMessage"
+        },                {
             "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult",
             "name": "MigrationRunResult",
             "summary": "Provides\u0020information\u0020about\u0020the\u0020result\u0020of\u0020running\u0020a\u0020migration.",
@@ -81,20 +131,25 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Phpolar-Migrations-MigrationRunResult.html#method___construct"
         },                {
-            "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003Acompleted\u0028\u0029",
-            "name": "completed",
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003A\u0024name",
+            "name": "name",
             "summary": "",
-            "url": "classes/Phpolar-Migrations-MigrationRunResult.html#method_completed"
+            "url": "classes/Phpolar-Migrations-MigrationRunResult.html#property_name"
         },                {
-            "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003A\u0024migrationName",
-            "name": "migrationName",
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003A\u0024version",
+            "name": "version",
             "summary": "",
-            "url": "classes/Phpolar-Migrations-MigrationRunResult.html#property_migrationName"
+            "url": "classes/Phpolar-Migrations-MigrationRunResult.html#property_version"
         },                {
             "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003A\u0024status",
             "name": "status",
             "summary": "",
             "url": "classes/Phpolar-Migrations-MigrationRunResult.html#property_status"
+        },                {
+            "fqsen": "\\Phpolar\\Migrations\\MigrationRunResult\u003A\u003A\u0024durationMs",
+            "name": "durationMs",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-MigrationRunResult.html#property_durationMs"
         },                {
             "fqsen": "\\Phpolar\\Migrations\\RevertCommand",
             "name": "RevertCommand",

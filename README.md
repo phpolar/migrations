@@ -25,8 +25,8 @@ See <https://phpolar.github.io/migrations/>
 |     Command     |Memory Usage|
 |-----------------|------------|
 |     **create**  | 100 kB     |
-|     **run**     | 22 kB      |
-|     **revert**  | 20 kB      |
+|     **run**     | 39 kB      |
+|     **revert**  | 109 kB      |
 
 * Note: Does not include comments.
 
