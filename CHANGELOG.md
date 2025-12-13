@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.1.0 (2025-12-13)
+
+### Feat
+
+- add version,duration_ms, and error_text columns to ledger (#15)
+
 ## 1.0.2 (2025-12-13)
 
 ### Fix
