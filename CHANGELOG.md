@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.0.2 (2025-12-13)
+
+### Fix
+
+- add composer.json to installation artifacts (#14)
+
 ## 1.0.1 (2025-12-11)
 
 ### Fix
