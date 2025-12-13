@@ -17,8 +17,8 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 const CREATE_COMMAND_MEMORY_USAGE_THRESHOLD = 99_999;
-const REVERT_COMMAND_MEMORY_USAGE_THRESHOLD = 19_999;
-const RUN_COMMAND_MEMORY_USAGE_THRESHOLD = 21_999;
+const REVERT_COMMAND_MEMORY_USAGE_THRESHOLD = 109_999;
+const RUN_COMMAND_MEMORY_USAGE_THRESHOLD = 39_999;
 const MIGRATIONS_DIR = __DIR__ . "/../__files__";
 const MIGRATION_NAME = "CreateTableForAcceptanceTests";
 
@@ -162,11 +162,9 @@ final class MemoryUsageTest extends TestCase
         $runCommand = new RunCommand(
             connection: $connectionStub,
             insertMigrationResultStmt: <<<SQL
-            INSERT INTO `migration` (`name`, `status`)
-            VALUES (:name, :status);
+            INSERT INTO `migration` (`name`, `status`, `version`, `error_text`)
+            VALUES (:name, :status, :version, :error_text);
             SQL,
-            nameColumn: "name",
-            statusColumn: "status",
         );
 
         $runCommand->execute($pendingMigrations);

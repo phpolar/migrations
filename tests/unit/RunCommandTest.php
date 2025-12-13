@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpolar\Migrations;
 
+use Closure;
 use PDO;
 use PDOStatement;
 use PhpContrib\Migration\MigrationInterface;
@@ -17,6 +18,8 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversClass(RunCommand::class)]
 #[UsesClass(MigrationRunResult::class)]
+#[UsesClass(MigrationRunCompleted::class)]
+#[CoversClass(MigrationRunFailure::class)]
 #[CoversClass(StreamLogger::class)]
 final class RunCommandTest extends TestCase
 {
@@ -24,16 +27,18 @@ final class RunCommandTest extends TestCase
     #[TestDox("Shall run migration and record migration completion")]
     #[TestWith([
         <<<SQL
-        INSERT INTO `migration` (`name`, `status`)
-        VALUES (:name, :status);
+        INSERT INTO `migration` (`name`, `status`, `version`)
+        VALUES (:name, :status, :version);
         SQL,
         "name",
-        "status"
+        "status",
+        "version",
     ])]
     public function runsMigration(
         string $insertStatement,
-        string $nameColumn,
-        string $statusColumn,
+        string $nameParam,
+        string $statusParam,
+        string $versionParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $migrationMock = $this->createMock(MigrationInterface::class);
@@ -51,16 +56,16 @@ final class RunCommandTest extends TestCase
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
 
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
-            nameColumn: $nameColumn,
-            statusColumn: $statusColumn,
         );
 
         $result = $sut->execute([$migrationMock]);
@@ -72,16 +77,18 @@ final class RunCommandTest extends TestCase
     #[TestDox("Shall run all migrations and record migration completion")]
     #[TestWith([
         <<<SQL
-        INSERT INTO `migration` (`name`, `status`)
-        VALUES (:name, :status);
+        INSERT INTO `migration` (`name`, `status`, `version`)
+        VALUES (:name, :status, :version);
         SQL,
         "name",
         "status",
+        "version",
     ])]
     public function runsAllMigration(
         string $insertStatement,
-        string $nameColumn,
-        string $statusColumn,
+        string $nameParam,
+        string $statusParam,
+        string $versionParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $migrationMock0 = $this->createMock(MigrationInterface::class);
@@ -122,40 +129,46 @@ final class RunCommandTest extends TestCase
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock0),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock0),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock1->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock1),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock1),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock2->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock2),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock2),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock3->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock3),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock3),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
 
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
-            nameColumn: $nameColumn,
-            statusColumn: $statusColumn,
         );
 
         $result = $sut->execute(
@@ -174,16 +187,18 @@ final class RunCommandTest extends TestCase
     #[TestDox("Shall run all migrations and notify if one or more fails")]
     #[TestWith([
         <<<SQL
-        INSERT INTO `migration` (`name`, `status`)
-        VALUES (:name, :status);
+        INSERT INTO `migration` (`name`, `status`, `version`)
+        VALUES (:name, :status, :version);
         SQL,
         "name",
         "status",
+        "version",
     ])]
     public function runsAllMigrationOneFails(
         string $insertStatement,
-        string $nameColumn,
-        string $statusColumn,
+        string $nameParam,
+        string $statusParam,
+        string $versionParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $migrationMock0 = $this->createMock(MigrationInterface::class);
@@ -195,7 +210,7 @@ final class RunCommandTest extends TestCase
         $stmtMock2 = $this->createMock(PDOStatement::class);
         $stmtMock3 = $this->createMock(PDOStatement::class);
 
-        $connectionMock->expects($this->exactly(3))
+        $connectionMock->expects($this->atLeast(3))
             ->method("prepare")
             ->with($insertStatement)
             ->willReturnOnConsecutiveCalls(
@@ -219,39 +234,63 @@ final class RunCommandTest extends TestCase
         $migrationMock3->expects($this->once())
             ->method("up")
             ->with($connectionMock)
-            ->willReturn(MigrationRunStatus::FAILED);
+            ->willThrowException(new \Exception("boom"));
         $stmtMock0->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock0),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock0),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock1->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock1),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock1),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock2->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock2),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock2),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
-        $stmtMock3->expects($this->never())
-            ->method("execute");
+        $stmtMock3->expects($this->once())
+            ->method("execute")
+            ->willReturnCallback(
+                Closure::bind(
+                    function (array $params) use (
+                        $migrationMock3,
+                        $nameParam,
+                        $versionParam,
+                        $statusParam
+                    ) {
+                        $this->assertSame($params[$nameParam], $migrationMock3::class);
+                        $this->assertSame($params[$versionParam], 0);
+                        $this->assertSame($params[$statusParam], MigrationRunStatus::FAILED->name);
+                        $this->assertSame($params["error_text"], "boom");
+                        return true;
+                    },
+                    $this,
+                )
+            );
 
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
-            nameColumn: $nameColumn,
-            statusColumn: $statusColumn,
+            nameParam: $nameParam,
+            statusParam: $statusParam,
+            versionParam: $versionParam,
         );
 
         $result = $sut->execute(
@@ -263,6 +302,7 @@ final class RunCommandTest extends TestCase
             ]
         );
 
+
         $this->assertFalse($result);
     }
 
@@ -272,16 +312,18 @@ final class RunCommandTest extends TestCase
     )]
     #[TestWith([
         <<<SQL
-        INSERT INTO `migration` (`name`, `status`)
-        VALUES (:name, :status);
+        INSERT INTO `migration` (`name`, `status`, `version`)
+        VALUES (:name, :status, :version);
         SQL,
         "name",
         "status",
+        "version",
     ])]
     public function runsAllMigrationOnePrepareFails(
         string $insertStatement,
-        string $nameColumn,
-        string $statusColumn,
+        string $nameParam,
+        string $statusParam,
+        string $versionParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $migrationMock0 = $this->createMock(MigrationInterface::class);
@@ -322,24 +364,30 @@ final class RunCommandTest extends TestCase
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock0),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock0),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock1->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock1),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock1),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock2->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock2),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock2),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock3->expects($this->never())
@@ -348,8 +396,9 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
-            nameColumn: $nameColumn,
-            statusColumn: $statusColumn,
+            nameParam: $nameParam,
+            statusParam: $statusParam,
+            versionParam: $versionParam,
         );
 
         $result = $sut->execute(
@@ -370,16 +419,18 @@ final class RunCommandTest extends TestCase
     )]
     #[TestWith([
         <<<SQL
-        INSERT INTO `migration` (`name`, `status`)
-        VALUES (:name, :status);
+        INSERT INTO `migration` (`name`, `status`, `version`)
+        VALUES (:name, :status, :version);
         SQL,
         "name",
         "status",
+        "version",
     ])]
     public function runsAllMigrationOneExecuteFails(
         string $insertStatement,
-        string $nameColumn,
-        string $statusColumn,
+        string $nameParam,
+        string $statusParam,
+        string $versionParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $migrationMock0 = $this->createMock(MigrationInterface::class);
@@ -420,40 +471,49 @@ final class RunCommandTest extends TestCase
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock0),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock0),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock1->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock1),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock1),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock2->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock2),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock2),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(true);
         $stmtMock3->expects($this->once())
             ->method("execute")
             ->with(
                 [
-                    $nameColumn => get_class($migrationMock2),
-                    $statusColumn => MigrationRunStatus::COMPLETED->name
+                    $nameParam => get_class($migrationMock2),
+                    $versionParam => 0,
+                    "duration_ms" => 0,
+                    $statusParam => MigrationRunStatus::COMPLETED->name
                 ]
             )->willReturn(false);
 
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
-            nameColumn: $nameColumn,
-            statusColumn: $statusColumn,
+            nameParam: $nameParam,
+            statusParam: $statusParam,
+            versionParam: $versionParam,
         );
 
         $result = $sut->execute(
