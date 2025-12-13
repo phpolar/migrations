@@ -2,7 +2,6 @@
 
 namespace Phpolar\Migrations;
 
-use PhpContrib\Migration\MigrationInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -18,35 +17,30 @@ final class RevertCommandHandlerTest extends TestCase
     #[Test]
     #[TestDox("Shall revert the last migration and log success")]
     #[TestWith([
-        "expectedLogOutputPattern" => "/^Revert of .+ completed successfully\.$/"
+        "Migration1700000000000CreateSomeRandomTable",
+        "Revert of Migration1700000000000CreateSomeRandomTable completed successfully."
     ])]
     public function revertsMigrations(
-        string $expectedLogOutputPattern,
+        string $migrationName,
+        string $expectedLogOutput,
     ) {
         $revertCommandMock = $this->createMock(RevertCommand::class);
         $loggerMock = $this->createMock(LoggerInterface::class);
-        $migrationStub = $this->createStub(MigrationInterface::class);
-        $lastMigrationQueryMock = $this->createMock(GetLastMigrationQuery::class);
-
-        $lastMigrationQueryMock->expects($this->once())
-            ->method("query")
-            ->willReturn($migrationStub);
 
         $loggerMock->expects($this->once())
             ->method("info")
-            ->with($this->callback(
-                static function (string $logInfo) use ($expectedLogOutputPattern) {
-                    return preg_match($expectedLogOutputPattern, $logInfo) === 1;
-                }
-            ));
+            ->with($expectedLogOutput);
 
         $revertCommandMock->expects($this->once())
             ->method("execute")
             ->willReturn(true);
 
+        $revertCommandMock->expects($this->once())
+            ->method("getLastMigrationName")
+            ->willReturn($migrationName);
+
         $sut = new RevertCommandHandler(
             revertCommand: $revertCommandMock,
-            lastMigrationQuery: $lastMigrationQueryMock,
             logger: $loggerMock,
         );
 
@@ -56,35 +50,30 @@ final class RevertCommandHandlerTest extends TestCase
     #[Test]
     #[TestDox("Shall notify when reverting the last migration fails")]
     #[TestWith([
-        "expectedLogOutputPattern" => "/^Migration revert of .+ failed or is pending\.$/"
+        "Migration revert of Migration1700000000000CreateSomeRandomTable failed or is pending.",
+        "Migration1700000000000CreateSomeRandomTable",
     ])]
     public function notifiesRevertFailed(
-        string $expectedLogOutputPattern,
+        string $expectedLogOutput,
+        string $migrationName,
     ) {
-        $queryMock = $this->createMock(GetLastMigrationQuery::class);
         $revertCommandMock = $this->createMock(RevertCommand::class);
         $loggerMock = $this->createMock(LoggerInterface::class);
-        $migrationStub = $this->createStub(MigrationInterface::class);
-
-        $queryMock->expects($this->once())
-            ->method("query")
-            ->willReturn($migrationStub);
 
         $loggerMock->expects($this->once())
             ->method("error")
-            ->with($this->callback(
-                static function (string $logInfo) use ($expectedLogOutputPattern) {
-                    return preg_match($expectedLogOutputPattern, $logInfo) === 1;
-                }
-            ));
+            ->with($expectedLogOutput);
 
         $revertCommandMock->expects($this->once())
             ->method("execute")
             ->willReturn(false);
 
+        $revertCommandMock->expects($this->once())
+            ->method("getLastMigrationName")
+            ->willReturn($migrationName);
+
         $sut = new RevertCommandHandler(
             revertCommand: $revertCommandMock,
-            lastMigrationQuery: $queryMock,
             logger: $loggerMock,
         );
 
