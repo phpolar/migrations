@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.2.0 (2025-12-13)
+
+### Feat
+
+- remove superfluous parameter (#16)
+
 ## 1.1.0 (2025-12-13)
 
 ### Feat
