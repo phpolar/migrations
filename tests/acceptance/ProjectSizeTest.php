@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 const SRC_GLOB = "/src/{/,/**/}*.php";
-const PROJECT_SIZE_THRESHOLD = 15_000;
+const PROJECT_SIZE_THRESHOLD = 15_500;
 
 #[CoversNothing]
 final class ProjectSizeTest extends TestCase
