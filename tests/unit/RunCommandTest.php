@@ -66,6 +66,7 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
+            insertMigrationResultWithErrorStmt: "",
         );
 
         $result = $sut->execute([$migrationMock]);
@@ -169,6 +170,7 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
+            insertMigrationResultWithErrorStmt: "",
         );
 
         $result = $sut->execute(
@@ -212,7 +214,6 @@ final class RunCommandTest extends TestCase
 
         $connectionMock->expects($this->atLeast(3))
             ->method("prepare")
-            ->with($insertStatement)
             ->willReturnOnConsecutiveCalls(
                 $stmtMock0,
                 $stmtMock1,
@@ -288,6 +289,7 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
+            insertMigrationResultWithErrorStmt: "",
             nameParam: $nameParam,
             statusParam: $statusParam,
             versionParam: $versionParam,
@@ -396,6 +398,7 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
+            insertMigrationResultWithErrorStmt: "",
             nameParam: $nameParam,
             statusParam: $statusParam,
             versionParam: $versionParam,
@@ -511,6 +514,7 @@ final class RunCommandTest extends TestCase
         $sut = new RunCommand(
             connection: $connectionMock,
             insertMigrationResultStmt: $insertStatement,
+            insertMigrationResultWithErrorStmt: "",
             nameParam: $nameParam,
             statusParam: $statusParam,
             versionParam: $versionParam,

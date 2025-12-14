@@ -16,6 +16,7 @@ readonly class RunCommand
     public function __construct(
         private PDO $connection,
         private string $insertMigrationResultStmt,
+        private string $insertMigrationResultWithErrorStmt,
         private string $nameParam = "name",
         private string $statusParam = "status",
         private string $versionParam = "version",
@@ -84,7 +85,11 @@ readonly class RunCommand
             $params[$this->errorMessageParam] = $result->errorMessage;
         }
 
-        $stmt = $this->connection->prepare($this->insertMigrationResultStmt);
+        $stmt = $this->connection->prepare(
+            $result instanceof MigrationRunCompleted
+                ? $this->insertMigrationResultStmt
+                : $this->insertMigrationResultWithErrorStmt
+        );
         $ledgerInsertStatus = $stmt !== false && $stmt->execute($params) === true
             ? LedgerInsertStatus::SUCCESSFUL
             : LedgerInsertStatus::FAILED;
