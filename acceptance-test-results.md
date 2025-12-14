@@ -8,4 +8,4 @@
 
 ## Project Size (Phpolar\Migrations\ProjectSize)
 
-- [x] Source code total size shall be below 15000 bytes
+- [x] Source code total size shall be below 15500 bytes

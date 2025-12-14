@@ -161,8 +161,12 @@ final class MemoryUsageTest extends TestCase
         $runCommand = new RunCommand(
             connection: $connectionStub,
             insertMigrationResultStmt: <<<SQL
-            INSERT INTO `migration` (`name`, `status`, `version`, `error_text`)
-            VALUES (:name, :status, :version, :error_text);
+            INSERT INTO `migration` (`name`, `status`, `version`, `duration_ms`)
+            VALUES (:name, :status, :version, :duration_ms);
+            SQL,
+            insertMigrationResultWithErrorStmt: <<<SQL
+            INSERT INTO `migration` (`name`, `status`, `version`, `duration_ms`, `error_text`)
+            VALUES (:name, :status, :version, :duration_ms, :error_text);
             SQL,
         );
 
