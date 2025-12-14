@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.2.1 (2025-12-13)
+
+### Fix
+
+- add insert statement with error text (#17)
+
 ## 1.2.0 (2025-12-13)
 
 ### Feat
