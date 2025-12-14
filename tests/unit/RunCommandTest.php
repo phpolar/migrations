@@ -285,9 +285,6 @@ final class RunCommandTest extends TestCase
         INSERT INTO `migration` (`name`, `status`, `version`)
         VALUES (:name, :status, :version);
         SQL,
-        "name",
-        "status",
-        "version",
     ])]
     public function runsAllMigrationOnePrepareFails(
         string $insertStatement,
