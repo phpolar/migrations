@@ -161,6 +161,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Phpolar-Migrations-RevertCommand.html#method___construct"
         },                {
+            "fqsen": "\\Phpolar\\Migrations\\RevertCommand\u003A\u003AgetLastMigrationName\u0028\u0029",
+            "name": "getLastMigrationName",
+            "summary": "",
+            "url": "classes/Phpolar-Migrations-RevertCommand.html#method_getLastMigrationName"
+        },                {
             "fqsen": "\\Phpolar\\Migrations\\RevertCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
             "summary": "Execute\u0020the\u0020command.",
