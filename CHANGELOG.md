@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.3.0 (2025-12-14)
+
+### Feat
+
+- rename param args and make optional (#20)
+
 ## 1.2.1 (2025-12-13)
 
 ### Fix
