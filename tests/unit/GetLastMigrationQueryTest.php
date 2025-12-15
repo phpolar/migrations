@@ -86,8 +86,6 @@ final class GetLastMigrationQueryTest extends TestCase
         ORDER BY `id` DESC, `name` DESC, `version` DESC
         LIMIT 1;
         SQL,
-        "CreateSomeRandomTable",
-        "1765073576565",
     ])]
     public function notifiesPrepareFailed(
         string $query,
