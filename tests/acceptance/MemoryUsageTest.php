@@ -85,8 +85,8 @@ final class MemoryUsageTest extends TestCase
     {
         $this->expectsOutput();
 
-        $nameColumn = "name";
-        $migrationName = "Migration1765073576565CreateSomeRandomTable";
+        $migrationName = "CreateSomeRandomTable";
+        $migrationVersion = "1765073576565";
         $connectionStub = $this->createStub(Mysql::class);
         $stmtStub0 = $this->createStub(PDOStatement::class);
         $stmtStub1 = $this->createStub(PDOStatement::class);
@@ -96,15 +96,15 @@ final class MemoryUsageTest extends TestCase
             ->method("bindColumn")
             ->willReturnCallback(
                 function (
-                    string $name,
+                    string $val,
                     mixed &$var,
                     int $type,
                 ) use (
                     $migrationName,
-                    $nameColumn
+                    $migrationVersion,
                 ) {
-                    $var = $migrationName;
-                    return $name === $nameColumn
+                    $var = $val === "name" ? $migrationName : $migrationVersion;
+                    return in_array($val, ["name", "version"])
                         && $type === PDO::PARAM_STR;
                 }
             );
@@ -126,7 +126,6 @@ final class MemoryUsageTest extends TestCase
                 DELETE FROM `migration`
                 WHERE :name=`name`;
                 SQL,
-                nameColumn: $nameColumn,
             ),
             logger: new StreamLogger($this->stream),
         )->revert();

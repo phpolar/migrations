@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpolar\Migrations;
 
+use Closure;
 use PDO;
 use PDOStatement;
 use PhpContrib\Migration\MigrationInterface;
@@ -17,18 +18,37 @@ use stdClass;
 #[CoversClass(GetLastMigrationQuery::class)]
 final class GetLastMigrationQueryTest extends TestCase
 {
+    private function bindColumnCallback(mixed $migrationName, string $migrationVersion): Closure
+    {
+        return function (
+            string $val,
+            mixed &$var,
+            int $type,
+        ) use (
+            $migrationName,
+            $migrationVersion
+) {
+            $var = $val === "name" ? $migrationName : $migrationVersion;
+            return in_array($val, ["name", "version"])
+                && $type === PDO::PARAM_STR;
+        };
+    }
+
     #[Test]
     #[TestDox("Shall retrieve the last successfully run migration")]
     #[TestWith([
         <<<SQL
-        SELECT `name` FROM `migration`
-        WHERE `id`=:id;
+        SELECT `name`, `version` FROM `migration`
+        ORDER BY `id` DESC, `name` DESC, `version` DESC
+        LIMIT 1;
         SQL,
-        "Migration1765073576565CreateSomeRandomTable",
+        "CreateSomeRandomTable",
+        "1765073576565",
     ])]
     public function retrievesMigration(
         string $query,
         string $migrationName,
+        string $migrationVersion,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -39,18 +59,10 @@ final class GetLastMigrationQueryTest extends TestCase
             ->willReturn($stmtMock);
 
         $stmtMock->expects($this->once())->method("execute");
-        $stmtMock->expects($this->once())
+        $stmtMock->expects($this->exactly(2))
             ->method("bindColumn")
             ->willReturnCallback(
-                function (
-                    string $name,
-                    mixed &$var,
-                    int $type,
-                ) use ($migrationName) {
-                    $var = $migrationName;
-                    return $name === "name"
-                        && $type === PDO::PARAM_STR;
-                }
+                $this->bindColumnCallback($migrationName, $migrationVersion)
             );
         $stmtMock->expects($this->once())
             ->method("fetch")
@@ -70,9 +82,12 @@ final class GetLastMigrationQueryTest extends TestCase
     #[TestDox("Shall notify if preparing the statement failed")]
     #[TestWith([
         <<<SQL
-        SELECT `name` FROM `migration`
-        WHERE `id`=:id;
+        SELECT `name`, `version` FROM `migration`
+        ORDER BY `id` DESC, `name` DESC, `version` DESC
+        LIMIT 1;
         SQL,
+        "CreateSomeRandomTable",
+        "1765073576565",
     ])]
     public function notifiesPrepareFailed(
         string $query,
@@ -106,12 +121,17 @@ final class GetLastMigrationQueryTest extends TestCase
     #[TestDox("Shall notify if name not set to string")]
     #[TestWith([
         <<<SQL
-        SELECT `name` FROM `migration`
-        WHERE `id`=:id;
+        SELECT `name`, `version` FROM `migration`
+        ORDER BY `id` DESC, `name` DESC, `version` DESC
+        LIMIT 1;
         SQL,
+        false,
+        "1765073576565",
     ])]
     public function notifiesNameNotString(
         string $query,
+        mixed $migrationName,
+        string $migrationVersion,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -122,18 +142,10 @@ final class GetLastMigrationQueryTest extends TestCase
             ->willReturn($stmtMock);
 
         $stmtMock->expects($this->once())->method("execute");
-        $stmtMock->expects($this->once())
+        $stmtMock->expects($this->exactly(2))
             ->method("bindColumn")
             ->willReturnCallback(
-                function (
-                    string $name,
-                    mixed &$var,
-                    int $type,
-                ) {
-                    $var = true;
-                    return $name === "name"
-                        && $type === PDO::PARAM_STR;
-                }
+                $this->bindColumnCallback($migrationName, $migrationVersion)
             );
         $stmtMock->expects($this->once())
             ->method("fetch")
@@ -153,12 +165,17 @@ final class GetLastMigrationQueryTest extends TestCase
     #[TestDox("Shall notify if name is empty string")]
     #[TestWith([
         <<<SQL
-        SELECT `name` FROM `migration`
-        WHERE `id`=:id;
+        SELECT `name`, `version` FROM `migration`
+        ORDER BY `id` DESC, `name` DESC, `version` DESC
+        LIMIT 1;
         SQL,
+        "",
+        "1765073576565",
     ])]
     public function notifiesNameEmpty(
         string $query,
+        string $migrationName,
+        string $migrationVersion,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -169,18 +186,10 @@ final class GetLastMigrationQueryTest extends TestCase
             ->willReturn($stmtMock);
 
         $stmtMock->expects($this->once())->method("execute");
-        $stmtMock->expects($this->once())
+        $stmtMock->expects($this->exactly(2))
             ->method("bindColumn")
             ->willReturnCallback(
-                function (
-                    string $name,
-                    mixed &$var,
-                    int $type,
-                ) {
-                    $var = "";
-                    return $name === "name"
-                        && $type === PDO::PARAM_STR;
-                }
+                $this->bindColumnCallback($migrationName, $migrationVersion)
             );
         $stmtMock->expects($this->once())
             ->method("fetch")
@@ -204,10 +213,12 @@ final class GetLastMigrationQueryTest extends TestCase
         WHERE `id`=:id;
         SQL,
         "MigrationNonExistingClass",
+        "0",
     ])]
     public function notifiesMigrationNonExistingClass(
         string $query,
         string $migrationName,
+        string $migrationVersion,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -218,18 +229,10 @@ final class GetLastMigrationQueryTest extends TestCase
             ->willReturn($stmtMock);
 
         $stmtMock->expects($this->once())->method("execute");
-        $stmtMock->expects($this->once())
+        $stmtMock->expects($this->exactly(2))
             ->method("bindColumn")
             ->willReturnCallback(
-                function (
-                    string $name,
-                    mixed &$var,
-                    int $type,
-                ) use ($migrationName) {
-                    $var = $migrationName;
-                    return $name === "name"
-                        && $type === PDO::PARAM_STR;
-                }
+                $this->bindColumnCallback($migrationName, $migrationVersion)
             );
         $stmtMock->expects($this->once())
             ->method("fetch")
@@ -253,10 +256,12 @@ final class GetLastMigrationQueryTest extends TestCase
         WHERE `id`=:id;
         SQL,
         stdClass::class,
+        "0",
     ])]
     public function notifiesMigrationNotImplementingMigration(
         string $query,
         string $migrationName,
+        string $migrationVersion,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -267,18 +272,10 @@ final class GetLastMigrationQueryTest extends TestCase
             ->willReturn($stmtMock);
 
         $stmtMock->expects($this->once())->method("execute");
-        $stmtMock->expects($this->once())
+        $stmtMock->expects($this->exactly(2))
             ->method("bindColumn")
             ->willReturnCallback(
-                function (
-                    string $name,
-                    mixed &$var,
-                    int $type,
-                ) use ($migrationName) {
-                    $var = $migrationName;
-                    return $name === "name"
-                        && $type === PDO::PARAM_STR;
-                }
+                $this->bindColumnCallback($migrationName, $migrationVersion)
             );
         $stmtMock->expects($this->once())
             ->method("fetch")

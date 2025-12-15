@@ -20,7 +20,7 @@ readonly class GetPendingMigrationsQuery
         private PDO $connection,
         private string $completedMigrationsQuery,
         private array $candidates,
-        private string $statusColumn,
+        private string $statusParam = "status",
     ) {
     }
 
@@ -38,7 +38,7 @@ readonly class GetPendingMigrationsQuery
         }
 
         $result = $stmt->execute([
-            $this->statusColumn => MigrationRunStatus::COMPLETED->name
+            $this->statusParam => MigrationRunStatus::COMPLETED->name
         ]);
 
         if ($result === false) {
