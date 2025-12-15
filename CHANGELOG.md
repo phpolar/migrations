@@ -2,6 +2,12 @@
 
 Adds support for running database migrations in your application
 
+## 1.3.1 (2025-12-14)
+
+### Fix
+
+- **RevertCommand**: remove name parameter (#21)
+
 ## 1.3.0 (2025-12-14)
 
 ### Feat
