@@ -39,7 +39,6 @@ final class RevertCommandTest extends TestCase
 
         $stmtMock->expects($this->once())
             ->method("execute")
-            ->with([$nameParam => get_class($migrationMock)])
             ->willReturn(true);
 
 
@@ -47,7 +46,6 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -77,7 +75,6 @@ final class RevertCommandTest extends TestCase
 
         $stmtMock->expects($this->once())
             ->method("execute")
-            ->with([$nameParam => get_class($migrationMock)])
             ->willReturn(false);
 
 
@@ -85,7 +82,6 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -115,7 +111,6 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -143,7 +138,6 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -171,7 +165,6 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
