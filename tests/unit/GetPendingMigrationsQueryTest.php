@@ -60,7 +60,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
     ])]
     public function getsPendingMigrations(
         string $completedMigrationsQuery,
-        string $statusColumn,
+        string $statusParam,
         array $candidates,
         array $completed,
         int $expectedCount,
@@ -86,7 +86,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
             candidates: $candidates,
             connection: $connectionMock,
             completedMigrationsQuery: $completedMigrationsQuery,
-            statusColumn: $statusColumn,
+            statusParam: $statusParam,
         );
 
         $result = $sut->query();
@@ -124,7 +124,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
             candidates: [],
             connection: $connectionMock,
             completedMigrationsQuery: $completedMigrationsQuery,
-            statusColumn: "",
+            statusParam: "",
         );
 
         $result = $sut->query();
@@ -144,7 +144,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
     ])]
     public function notifiesExecuteFailed(
         string $completedMigrationsQuery,
-        string $statusColumn,
+        string $statusParam,
     ) {
         $connectionMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -156,7 +156,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
 
         $stmtMock->expects($this->once())
             ->method("execute")
-            ->with([$statusColumn => MigrationRunStatus::COMPLETED->name])
+            ->with([$statusParam => MigrationRunStatus::COMPLETED->name])
             ->willReturn(false);
         $stmtMock->expects($this->never())
             ->method("fetchAll");
@@ -166,7 +166,7 @@ final class GetPendingMigrationsQueryTest extends TestCase
             candidates: [],
             connection: $connectionMock,
             completedMigrationsQuery: $completedMigrationsQuery,
-            statusColumn: $statusColumn,
+            statusParam: $statusParam,
         );
 
         $result = $sut->query();

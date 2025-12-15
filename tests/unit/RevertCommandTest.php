@@ -20,7 +20,7 @@ final class RevertCommandTest extends TestCase
     #[Test]
     #[TestDox("Shall revert the last successfully run migration")]
     #[TestWith(["DELETE FROM `migration` WHERE `name`=:name", "name"])]
-    public function revertMigration(string $deleteStatement, string $nameColumn)
+    public function revertMigration(string $deleteStatement, string $nameParam)
     {
         $migrationMock = $this->createMock(MigrationInterface::class);
         $connectionMock = $this->createMock(PDO::class);
@@ -39,7 +39,7 @@ final class RevertCommandTest extends TestCase
 
         $stmtMock->expects($this->once())
             ->method("execute")
-            ->with([$nameColumn => get_class($migrationMock)])
+            ->with([$nameParam => get_class($migrationMock)])
             ->willReturn(true);
 
 
@@ -47,7 +47,7 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameColumn: $nameColumn,
+            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -58,7 +58,7 @@ final class RevertCommandTest extends TestCase
     #[Test]
     #[TestDox("Shall notify when delete execution fails")]
     #[TestWith(["DELETE FROM `migration` WHERE `name`=:name", "name"])]
-    public function notifiesWhenExecuteFails(string $deleteStatement, string $nameColumn)
+    public function notifiesWhenExecuteFails(string $deleteStatement, string $nameParam)
     {
         $migrationMock = $this->createMock(MigrationInterface::class);
         $connectionMock = $this->createMock(PDO::class);
@@ -77,7 +77,7 @@ final class RevertCommandTest extends TestCase
 
         $stmtMock->expects($this->once())
             ->method("execute")
-            ->with([$nameColumn => get_class($migrationMock)])
+            ->with([$nameParam => get_class($migrationMock)])
             ->willReturn(false);
 
 
@@ -85,7 +85,7 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameColumn: $nameColumn,
+            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -96,7 +96,7 @@ final class RevertCommandTest extends TestCase
     #[Test]
     #[TestDox("Shall notify when prepare statement fails")]
     #[TestWith(["DELETE FROM `migration` WHERE `name`=:name", "name"])]
-    public function notifiesWhenPrepareFails(string $deleteStatement, string $nameColumn)
+    public function notifiesWhenPrepareFails(string $deleteStatement, string $nameParam)
     {
         $migrationMock = $this->createMock(MigrationInterface::class);
         $connectionMock = $this->createMock(PDO::class);
@@ -115,7 +115,7 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameColumn: $nameColumn,
+            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -126,7 +126,7 @@ final class RevertCommandTest extends TestCase
     #[Test]
     #[TestDox("Shall notify when migration revert fails")]
     #[TestWith(["DELETE FROM `migration` WHERE `name`=:name", "name"])]
-    public function notifiesWhenRevertFails(string $deleteStatement, string $nameColumn)
+    public function notifiesWhenRevertFails(string $deleteStatement, string $nameParam)
     {
         $migrationMock = $this->createMock(MigrationInterface::class);
         $connectionMock = $this->createMock(PDO::class);
@@ -143,7 +143,7 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameColumn: $nameColumn,
+            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
@@ -154,7 +154,7 @@ final class RevertCommandTest extends TestCase
     #[Test]
     #[TestDox("Shall notify when migration revert is still pending")]
     #[TestWith(["DELETE FROM `migration` WHERE `name`=:name", "name"])]
-    public function notifiesWhenRevertPending(string $deleteStatement, string $nameColumn)
+    public function notifiesWhenRevertPending(string $deleteStatement, string $nameParam)
     {
         $migrationMock = $this->createMock(MigrationInterface::class);
         $connectionMock = $this->createMock(PDO::class);
@@ -171,7 +171,7 @@ final class RevertCommandTest extends TestCase
             migration: $migrationMock,
             connection: $connectionMock,
             migrationRecordDeleteStatement: $deleteStatement,
-            nameColumn: $nameColumn,
+            nameParam: $nameParam,
         );
 
         $result = $sut->execute();
