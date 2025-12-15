@@ -18,7 +18,6 @@ readonly class RevertCommand
         private MigrationInterface $migration,
         private PDO $connection,
         private string $migrationRecordDeleteStatement,
-        private string $nameParam = "name",
     ) {
     }
 
@@ -48,8 +47,6 @@ readonly class RevertCommand
         );
 
         return $stmt instanceof PDOStatement
-            && $stmt->execute(
-                [$this->nameParam => \get_class($this->migration)]
-            );
+            && $stmt->execute();
     }
 }
